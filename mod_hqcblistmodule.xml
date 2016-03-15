@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="module" version="3.1.0" client="site" method="upgrade">
-    <name>HQ CB list-module</name>
+    <name>HQ CB List Module</name>
     <author>Magnus Hasselquist</author>
     <authorUrl>https://plus.google.com/+MagnusHasselquist/</authorUrl>
-    <version>2.0.1</version>
-    <creationDate>2016-02-05</creationDate>
-    <description>Displaying Users from a selected CB List as a Module. This version is for CB 2</description>
+    <version>2.0.2</version>
+    <creationDate>2016-03-15</creationDate>
+    <description>Displaying Users from a selected CB List in a Module. This version is for CB 2</description>
     <files>
         <filename>mod_hqcblistmodule.xml</filename>
         <filename module="mod_hqcblistmodule">mod_hqcblistmodule.php</filename>
