@@ -44,16 +44,16 @@ class modHelloWorldHelper
      * @access public
      */
 
-    public static function getHello( $params )
-    {
-    	$result=''; //reset result
+	public static function getHello( $params )
+	{
+    		$result=''; //reset result
 		// Get the parameters
 		$list_id = $params->get('listid');
 		$list_template = $params->get('template');
-    $list_textabove = $params->get('text-above');
-    $list_textbelow = $params->get('text-below');
+		$list_textabove = $params->get('text-above');
+		$list_textbelow = $params->get('text-below');
 
-    // Obtain a database connection
+		// Obtain a database connection
 		$db = JFactory::getDbo();
 		// Lets make sure to support åäö
 		// $query = "SET CHARACTER SET utf8";
@@ -61,9 +61,9 @@ class modHelloWorldHelper
 
 		// Retrieve the selected list
 		$query = $db->getQuery(true)
-            ->select('params')
-            ->from('#__comprofiler_lists')
-            ->where('listid = '. $list_id . ' AND published=1')
+		->select('params')
+		->from('#__comprofiler_lists')
+		->where('listid = '. $list_id . ' AND published=1')
 			->order('ordering ASC');
 		// echo $query;
 		$db->setQuery($query);
@@ -77,49 +77,49 @@ class modHelloWorldHelper
 		// Process the filterfields to make ut useful for next query
 		// CB19 $select_sql = utf8_encode(substr(urldecode($select_sql_raw), 2, -1));
 		$json_a=json_decode($select_sql_raw,true);
-    $filters_basic = $json_a['filter_basic'];
-    $filter_advanced = $json_a['filter_advanced'];
-    if ($filters_basic <>'') {
-             foreach($filters_basic as $filter) {
+		$filters_basic = $json_a['filter_basic'];
+		$filter_advanced = $json_a['filter_advanced'];
+		if ($filters_basic <>'') {
+        	foreach($filters_basic as $filter) {
                      $select_sql .= $filter['column'] . " " . $filter['operator']. " '" . $filter['value'] ."' OR ";
-             }
-             $select_sql = substr($select_sql, 0, -4); //rensa bort den sista OR
-     }
-      if ($filter_advanced <> '') {
+        	}
+		$select_sql = substr($select_sql, 0, -4); //rensa bort den sista OR
+	}
+	if ($filter_advanced <> '') {
              $select_sql = $filter_advanced;
-     }
+    	}
 
-		$userlistorder = $json_a['sort_basic'][0]['column'] . " " . $json_a['sort_basic'][0]['direction'];
-		// echo "ORDER: " . $userlistorder .".";
-		// echo "DEC :".$select_sql;
+	$userlistorder = $json_a['sort_basic'][0]['column'] . " " . $json_a['sort_basic'][0]['direction'];
+	// echo "ORDER: " . $userlistorder .".";
+	// echo "DEC :".$select_sql;
 
-		// Set a base-sql for connecting users, fields and lists
-		$fetch_sql = "select * from #__users inner join #__comprofiler on #__users.id = #__comprofiler.user_id where #__users.block = 0"; //TODO check block or something else?
+	// Set a base-sql for connecting users, fields and lists
+	$fetch_sql = "select * from #__users inner join #__comprofiler on #__users.id = #__comprofiler.user_id where #__users.block = 0"; //TODO check block or something else?
 
-		// add "having" only if needed
-		if ($select_sql <>' ') $fetch_sql = $fetch_sql . " HAVING ";
+	// add "having" only if needed
+	if ($select_sql <>' ') $fetch_sql = $fetch_sql . " HAVING ";
 
-		// Combine the final SQL for the selected list
-		$fetch_sql = $fetch_sql . $select_sql;
-		// echo $fetch_sql . "<br>";
+	// Combine the final SQL for the selected list
+	$fetch_sql = $fetch_sql . $select_sql;
+	// echo $fetch_sql . "<br>";
 
-		//Add ordering if list is configured for that
-		if ($userlistorder <>'') { $fetch_sql .= " ORDER BY ".$userlistorder; }
+	//Add ordering if list is configured for that
+	if ($userlistorder <>'') { $fetch_sql .= " ORDER BY ".$userlistorder; }
 
-		// Now, lets use the final SQL to get all Users from Joomla/CB
-		$query = $fetch_sql;
-		$db->setQuery($query);
-		$persons = $db->loadAssocList();
-		if (!empty($persons)){
-			foreach ($persons as $person) { //for every person that is a reciever, lets do an email.
-			 	// $result .= $person['username']."<br/>";
-			 	// Lets loop over the Users and create the output using the Template, replacing [fileds] in Template
-			    $result .=  db_field_replace($list_template, $person['id']);
-			}
+	// Now, lets use the final SQL to get all Users from Joomla/CB
+	$query = $fetch_sql;
+	$db->setQuery($query);
+	$persons = $db->loadAssocList();
+	if (!empty($persons)){
+		foreach ($persons as $person) { //for every person that is a reciever, lets do an email.
+		 	// $result .= $person['username']."<br/>";
+		 	// Lets loop over the Users and create the output using the Template, replacing [fileds] in Template
+			$result .=  db_field_replace($list_template, $person['id']);
 		}
-    $resultcomplete = $list_textabove . $result . $list_textbelow;
-		return $resultcomplete;
+	}
+	$resultcomplete = $list_textabove . $result . $list_textbelow;
+	return $resultcomplete;
 
-    }
+    	}
 }
 ?>
