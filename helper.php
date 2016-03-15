@@ -4,36 +4,35 @@
  * helper.php
  **/
 
-     function db_field_replace($before_str, $user_id) {
-		$db = JFactory::getDbo();
-		// $query = "SET CHARACTER SET utf8";
-		// $db->setQuery($query);
-		$query = "select * from #__users inner join #__comprofiler on #__users.id = #__comprofiler.user_id WHERE #__users.id =".$user_id;
-		// echo $query;
-		$db->setQuery($query);
-		$person = $db->loadAssoc();
-		// get all the fields that could possibly be part of template to be replaced to get us something to loop through. Also add id and user_id as fields.
-		$query = "SELECT name FROM #__comprofiler_fields WHERE #__comprofiler_fields.table = '#__users' OR #__comprofiler_fields.table = '#__comprofiler' UNION SELECT 'id' AS name UNION SELECT 'user_id' AS name";
-		$db->setQuery($query);
-		$fields = $db->loadAssocList();
+function db_field_replace($before_str, $user_id) {
+	$db = JFactory::getDbo();
+	// $query = "SET CHARACTER SET utf8";
+	// $db->setQuery($query);
+	$query = "select * from #__users inner join #__comprofiler on #__users.id = #__comprofiler.user_id WHERE #__users.id =".$user_id;
+	// echo $query;
+	$db->setQuery($query);
+	$person = $db->loadAssoc();
+	// get all the fields that could possibly be part of template to be replaced to get us something to loop through. Also add id and user_id as fields.
+	$query = "SELECT name FROM #__comprofiler_fields WHERE #__comprofiler_fields.table = '#__users' OR #__comprofiler_fields.table = '#__comprofiler' UNION SELECT 'id' AS name UNION SELECT 'user_id' AS name";
+	$db->setQuery($query);
+	$fields = $db->loadAssocList();
 
-		$after_str = $before_str;
-		// echo $before_str;
-		if (!empty($fields)){
-			foreach ($fields as $field) { //for every field that may be in the before_str
-				$paramtofind = "[".$field['name']."]";
-				$fieldtouse = $field['name'];
-				if (isset($person[$fieldtouse])) {
-					$datatoinsert = $person[$fieldtouse];
-		 			$after_str = str_ireplace($paramtofind, $datatoinsert, $after_str);
-		 		} else {
-		 			$after_str = str_ireplace($paramtofind, '', $after_str); // replace the param name with '' if not found.
-				};
-			}
+	$after_str = $before_str;
+	// echo $before_str;
+	if (!empty($fields)){
+		foreach ($fields as $field) { //for every field that may be in the before_str
+			$paramtofind = "[".$field['name']."]";
+			$fieldtouse = $field['name'];
+			if (isset($person[$fieldtouse])) {
+				$datatoinsert = $person[$fieldtouse];
+	 			$after_str = str_ireplace($paramtofind, $datatoinsert, $after_str);
+	 		} else {
+	 			$after_str = str_ireplace($paramtofind, '', $after_str); // replace the param name with '' if not found.
+			};
 		}
-		return $after_str;
 	}
-
+	return $after_str;
+}
 
 class modHelloWorldHelper
 {
