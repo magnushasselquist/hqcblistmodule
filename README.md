@@ -1,2 +1,2 @@
 # hqcblistmodule
-HQ CB List Module
+HQ CB List Module for Community Builder
