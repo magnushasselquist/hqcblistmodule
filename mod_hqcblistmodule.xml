@@ -2,9 +2,9 @@
 <extension type="module" version="3.1.0" client="site" method="upgrade">
     <name>HQ CB List for Community Builder</name>
     <author>Magnus Hasselquist</author>
-    <authorUrl>http://mintekniskasida.blogspot.se/</authorUrl>
-    <version>2.0.4</version>
-    <creationDate>2016-04-01</creationDate>
+    <authorUrl>https://github.com/magnushasselquist</authorUrl>
+    <version>2.0.5</version>
+    <creationDate>2016-04-12</creationDate>
     <license>GNU General Public License version 2 or later</license>
     <description>Displaying Users from a selected CB List in a Module. This version is for CB 2</description>
     <files>
