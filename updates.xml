@@ -1,5 +1,5 @@
  <update>
-    <name>HQ List for Community Builder</name>
+    <name>mod_hqcblistmodule</name>
     <description>HQ List for Community Builder</description>
     <element>hqcblistmodule</element>
     <type>module</type>
