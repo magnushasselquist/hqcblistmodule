@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="module" version="3.1.0" client="site" method="upgrade">
-    <name>mod_hqcblistmodule</name>
+    <name>HQ CB List for Community Builder</name>
     <author>Magnus Hasselquist</author>
     <authorUrl>https://github.com/magnushasselquist</authorUrl>
     <version>2.0.7</version>
@@ -48,6 +48,6 @@
 		</fields>
     </config>
     <updateservers>
-      <server type="extension" priority="2" name="mod_hqcblistmodule"> https://raw.githubusercontent.com/magnushasselquist/hqcblistmodule/master/updates.xml</server>
+      <server type="extension" priority="2" name="HQ CB List for Community Builder"> https://raw.githubusercontent.com/magnushasselquist/hqcblistmodule/master/updates.xml</server>
     </updateservers>
 </extension>
