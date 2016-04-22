@@ -47,5 +47,7 @@
     		</fieldset>
 		</fields>
     </config>
-    https://raw.githubusercontent.com/magnushasselquist/hqcblistmodule/master/updates.xml
+    <updateservers>
+      <server type="extension" priority="2" name="HQ CB List Module"> https://raw.githubusercontent.com/magnushasselquist/hqcblistmodule/master/updates.xml</server>
+    </updateservers>
 </extension>
