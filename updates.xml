@@ -2,8 +2,8 @@
     <name>HQ List for Community Builder</name>
     <description>HQ List for Community Builder</description>
     <element>hqcblistmodule</element>
-    <type>component</type>
-    <version>1.0.4</version>
+    <type>module</type>
+    <version>2.0.2</version>
     <infourl title="Release notes">http://magnushasselquist.github.io/hqcblistmodule/</infourl>
     <downloads>
         <downloadurl type="full" format="zip">https://github.com/magnushasselquist/hqcblistmodule/zipball/master</downloadurl>
