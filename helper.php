@@ -74,6 +74,7 @@ class modHelloWorldHelper
 		// Load the List row.
 		$row = $db->loadResult();
 		$select_sql_raw = $row;
+		$select_sql =""; //declare variable
 
 		// echo "RAW :".$select_sql_raw."<br/>"; //DEBUG
 
