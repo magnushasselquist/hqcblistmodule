@@ -85,9 +85,9 @@ class modHelloWorldHelper
 		$filter_advanced = $json_a['filter_advanced'];
 		if ($filters_basic <>'') {
         	foreach($filters_basic as $filter) {
-                     $select_sql .= $filter['column'] . " " . $filter['operator']. " '" . $filter['value'] ."' OR ";
+                     $select_sql .= $filter['column'] . " " . $filter['operator']. " '" . $filter['value'] ."' AND ";
         	}
-		$select_sql = substr($select_sql, 0, -4); //rensa bort den sista OR
+		$select_sql = substr($select_sql, 0, -5); //rensa bort den sista AND
 	}
 	if ($filter_advanced <> '') {
              $select_sql = $filter_advanced;
