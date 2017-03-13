@@ -65,6 +65,7 @@ class modHelloWorldHelper
 		// Retrieve the selected list
 		$query = $db->getQuery(true)
 		->select('params')
+		->select('usergroupids')		
 		->from('#__comprofiler_lists')
 		->where('listid = '. $list_id . ' AND published=1')
 			->order('ordering ASC');
@@ -72,9 +73,9 @@ class modHelloWorldHelper
 		$db->setQuery($query);
 
 		// Load the List row.
-		$row = $db->loadResult();
-		$select_sql_raw = $row;
-		$select_sql =""; //declare variable
+		$row = $db->loadAssoc();
+		$select_sql_raw = $row['params'];
+		$select_sql =""; //declare variable		
 
 		// echo "RAW :".$select_sql_raw."<br/>"; //DEBUG
 
@@ -88,23 +89,35 @@ class modHelloWorldHelper
                      $select_sql .= $filter['column'] . " " . $filter['operator']. " '" . $filter['value'] ."' AND ";
         	}
 		$select_sql = substr($select_sql, 0, -5); //rensa bort den sista AND
-	}
-	if ($filter_advanced <> '') {
-             $select_sql = $filter_advanced;
-    	}
+		}
+		if ($filter_advanced <> '') {
+	             $select_sql = $filter_advanced;
+	    	}
 
 	$userlistorder = $json_a['sort_basic'][0]['column'] . " " . $json_a['sort_basic'][0]['direction'];
 	// echo "ORDER: " . $userlistorder .".";
 	// echo "DEC :".$select_sql;
 
 	// Set a base-sql for connecting users, fields and lists
-	$fetch_sql = "select * from #__users inner join #__comprofiler on #__users.id = #__comprofiler.user_id where #__users.block = 0"; //TODO check block or something else?
+// OLD	$fetch_sql = "select * from #__users inner join #__comprofiler on #__users.id = #__comprofiler.user_id where #__users.block = 0"; //TODO check block or something else?
+        $usergroupids = str_replace("|*|", ",", $row['usergroupids']); //CMJ ADDED
+
+        $list_show_unapproved = $json_a['list_show_unapproved'];
+        $list_show_blocked = $json_a['list_show_blocked'];
+        $list_show_unconfirmed = $json_a['list_show_unconfirmed'];
+        $fetch_sql = "SELECT u.*, ue.* FROM j25_users u JOIN j25_user_usergroup_map g ON g.`user_id` = u.`id` JOIN j25_comprofiler ue ON ue.`id` = u.`id` WHERE g.group_id IN (".$usergroupids.")";
+        if ($list_show_blocked == 0) {$fetch_sql.=" AND u.block = 0 ";}
+        if ($list_show_unapproved == 0) {$fetch_sql.=" AND ue.approved = 1 ";} 
+        if ($list_show_unconfirmed == 0) {$fetch_sql.=" AND ue.confirmed = 1 ";}
+
 
 	// add "having" only if needed
-	if ($select_sql <>' ') $fetch_sql = $fetch_sql . " HAVING ";
+//OLD	if ($select_sql <>' ') $fetch_sql = $fetch_sql . " HAVING ";
+        if ($select_sql <>'') $fetch_sql = $fetch_sql . " AND (" . $select_sql . ")";
 
 	// Combine the final SQL for the selected list
-	$fetch_sql = $fetch_sql . $select_sql;
+//OLD 	$fetch_sql = $fetch_sql . $select_sql;
+
 	// echo $fetch_sql . "<br>";
 
 	//Add ordering if list is configured for that
