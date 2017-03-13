@@ -105,7 +105,7 @@ class modHelloWorldHelper
         $list_show_unapproved = $json_a['list_show_unapproved'];
         $list_show_blocked = $json_a['list_show_blocked'];
         $list_show_unconfirmed = $json_a['list_show_unconfirmed'];
-        $fetch_sql = "SELECT u.*, ue.* FROM j25_users u JOIN j25_user_usergroup_map g ON g.`user_id` = u.`id` JOIN j25_comprofiler ue ON ue.`id` = u.`id` WHERE g.group_id IN (".$usergroupids.")";
+        $fetch_sql = "SELECT u.*, ue.* FROM #__users u JOIN #__user_usergroup_map g ON g.`user_id` = u.`id` JOIN #__comprofiler ue ON ue.`id` = u.`id` WHERE g.group_id IN (".$usergroupids.")";
         if ($list_show_blocked == 0) {$fetch_sql.=" AND u.block = 0 ";}
         if ($list_show_unapproved == 0) {$fetch_sql.=" AND ue.approved = 1 ";} 
         if ($list_show_unconfirmed == 0) {$fetch_sql.=" AND ue.confirmed = 1 ";}
