@@ -4,7 +4,7 @@
     <description>HQ List Mailer for Community Builder</description>
     <element>hqcblistmailer</element>
     <type>component</type>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
     <infourl title="Release notes">http://magnushasselquist.github.io/hqcblistmailer/</infourl>
     <downloads>
         <downloadurl type="full" format="zip">https://github.com/magnushasselquist/hqcblistmailer/zipball/master</downloadurl>
