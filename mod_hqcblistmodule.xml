@@ -44,6 +44,12 @@
                 		label="Text to be included UNDER the user list"
  					        buttons="false"
  					        filter="raw" />
+                  <field
+                		name="module-class"
+                		type="text"
+                		label="Class to be added to module"
+ 					        buttons="false"
+ 					        filter="raw" />			
     		</fieldset>
 		</fields>
     </config>
