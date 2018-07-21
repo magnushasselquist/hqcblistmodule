@@ -44,17 +44,10 @@
                 		label="Text to be included UNDER the user list"
  					        buttons="false"
  					        filter="raw" />
-                  <field
-                		name="module-class"
-                		type="text"
-                		label="Class to be added to module"
- 					        buttons="false"
- 					        filter="raw" />	
 		  <field 
 			 	name="debug" type="radio"
 				default="0"
-				description="JFIELD_PLG_SEARCH_ALL_DESC"
-				label="JFIELD_PLG_SEARCH_ALL_LABEL"
+				label="Turn on DEBUG output to help find errors in list filter (make sure to turn off in production)."
 				>
 					<option value="0">OFF</option>
 					<option value="1">ON</option>
