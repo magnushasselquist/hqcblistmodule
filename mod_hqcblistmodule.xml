@@ -3,8 +3,8 @@
     <name>HQ CB List for Community Builder</name>
     <author>Magnus Hasselquist</author>
     <authorUrl>https://github.com/magnushasselquist</authorUrl>
-    <version>2.1.1</version>
-    <creationDate>2017-03-31</creationDate>
+    <version>2.1.2</version>
+    <creationDate>2018-07-21</creationDate>
     <license>GNU General Public License version 2 or later</license>
     <description>Displaying Users from a selected CB List in a Module. This version is for CB 2</description>
     <files>
@@ -33,9 +33,9 @@
  					        buttons="false"
  					        filter="raw" />
                	 <field
-               		name="template"
-               		type="editor"
-               		label="Template for displaying each user. Use [cb_filedname] syntax to include fields."
+               			name="template"
+               			type="editor"
+               			label="Template for displaying each user. Use [cb_filedname] syntax to include fields."
 					        buttons="false"
 					        filter="raw" />
                   <field
@@ -49,7 +49,16 @@
                 		type="text"
                 		label="Class to be added to module"
  					        buttons="false"
- 					        filter="raw" />			
+ 					        filter="raw" />	
+		  <field 
+			 	name="Debug" type="radio"
+				default="0"
+				description="JFIELD_PLG_SEARCH_ALL_DESC"
+				label="JFIELD_PLG_SEARCH_ALL_LABEL"
+				>
+					<option value="0">OFF</option>
+					<option value="1">ON</option>
+				</field>			
     		</fieldset>
 		</fields>
     </config>
