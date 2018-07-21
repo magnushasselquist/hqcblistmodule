@@ -55,6 +55,7 @@ class modHelloWorldHelper
 		$list_template = $params->get('template');
 		$list_textabove = $params->get('text-above');
 		$list_textbelow = $params->get('text-below');
+		$list_debug = $params->get('debug');		
 
 		// Obtain a database connection
 		$db = JFactory::getDbo();
@@ -125,6 +126,7 @@ class modHelloWorldHelper
 
 	// Now, lets use the final SQL to get all Users from Joomla/CB
 	$query = $fetch_sql;
+	if ($list_debug == 1) { $debug_text = "<p>DEBUG: <pre>".$query."</pre></p>"; }
 	$db->setQuery($query);
 	$persons = $db->loadAssocList();
 	if (!empty($persons)){
@@ -133,8 +135,8 @@ class modHelloWorldHelper
 		 	// Lets loop over the Users and create the output using the Template, replacing [fileds] in Template
 			$result .=  db_field_replace($list_template, $person['id']);
 		}
-	}
-	$resultcomplete = $list_textabove . $result . $list_textbelow;
+	} else if ($list_debug == 1) { $debug_text .= "<p>DEBUG: Empty list?!</p>"; }
+	$resultcomplete = $list_textabove . $debug_text . $result . $list_textbelow;
 	return $resultcomplete;
 
     	}
