@@ -51,7 +51,7 @@
  					        buttons="false"
  					        filter="raw" />	
 		  <field 
-			 	name="Debug" type="radio"
+			 	name="debug" type="radio"
 				default="0"
 				description="JFIELD_PLG_SEARCH_ALL_DESC"
 				label="JFIELD_PLG_SEARCH_ALL_LABEL"
