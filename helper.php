@@ -78,7 +78,7 @@ class modHelloWorldHelper
 		$select_sql_raw = $row['params'];
 		$select_sql =""; //declare variable		
 
-		// echo "RAW :".$select_sql_raw."<br/>"; //DEBUG
+		if ($list_debug == 1) { $debug_text .= "<p>DEBUG: <pre>".$select_sql_raw."</pre></p>"; }
 
 		// Process the filterfields to make ut useful for next query
 		// CB19 $select_sql = utf8_encode(substr(urldecode($select_sql_raw), 2, -1));
@@ -126,7 +126,7 @@ class modHelloWorldHelper
 
 	// Now, lets use the final SQL to get all Users from Joomla/CB
 	$query = $fetch_sql;
-	if ($list_debug == 1) { $debug_text = "<p>DEBUG: <pre>".$query."</pre></p>"; }
+	if ($list_debug == 1) { $debug_text .= "<p>DEBUG: <pre>".$query."</pre></p>"; }
 	$db->setQuery($query);
 	$persons = $db->loadAssocList();
 	if (!empty($persons)){
