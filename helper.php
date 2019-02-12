@@ -120,7 +120,7 @@ class modHelloWorldHelper
 //OLD 	$fetch_sql = $fetch_sql . $select_sql;
 
 	// echo $fetch_sql . "<br>";
-
+	$fetch_sql .= ' GROUP BY u.id';
 	//Add ordering if list is configured for that
 	if ($userlistorder <>'') { $fetch_sql .= " ORDER BY ".$userlistorder; }
 
