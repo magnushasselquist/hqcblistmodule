@@ -86,10 +86,70 @@ class modHelloWorldHelper
 		$filters_basic = $json_a['filter_basic'];
 		$filter_advanced = $json_a['filter_advanced'];
 		if ($json_a['filter_mode'] == 0) {
-			foreach($filters_basic as $filter) {
-			     $select_sql .= $filter['column'] . " " . $filter['operator']. " '" . $filter['value'] ."' AND ";
+			$i = 0;
+			foreach ($filters_basic as $filter) {
+
+				if ($i>0)  {
+					$select_sql .= " AND " ;
+				}
+		   
+			   switch  ($filter[operator]) {
+					case "<>||ISNULL": // CB Not equal to
+					
+						if (!is_numeric($filter[value])) {
+							$value = "'".$value."'";
+						}
+						
+						$select_sql .=  "(".$filter[column] . "<> ".$value ." OR ". $filter[column] . " IS NULL)";
+						break;
+						
+					case "NOT REGEXP||ISNULL": // CB  is not regexp
+						
+						if (!is_numeric($filter[value])) {
+							$value = "'".$value."'";
+						} 
+						
+						$select_sql .=  "(".$filter[column] . " NOT REGEXP ".$value ." OR ". $filter[column] . " IS NULL)";
+						break;
+						
+					case "NOT LIKE||ISNULL"; //CB Does not contain	
+					
+						if (!is_numeric($filter[value])) {
+							$value = "'".$value."'";
+						} 
+						
+						$select_sql .=  "(".$filter[column] . " NOT LIKE ".$value ." OR ". $filter[column] . " IS NULL)";
+						break;
+						
+					case "IN"; //CB IN	
+					
+						$i = 0;
+						$include = "";
+						foreach ((explode(",",$filter[value])) as $value) {						
+							if ($i>0)  {
+								$include .= ", " ;
+							}
+							
+							if (!is_numeric($value)) {
+								$value = "'".$value."'";
+							} 
+
+							$include .= "".$value."";
+							$i++; 
+						}
+						$select_sql .=  "".$filter[column] . " IN (". $include .") ";
+						break;
+						
+					default:
+					
+						if (!is_numeric($filter[value])) {
+							$value = "'".$value."'";
+						} 
+						$select_sql .=  "(".$filter[column]." ".$filter[operator]." ".$value.")";
+						break;
+				}
+			$i++; 
 			}
-			$select_sql = substr($select_sql, 0, -5); //rensa bort den sista AND
 		}
 		else if ($json_a['filter_mode'] == 1) {
 	             $select_sql = $filter_advanced;
