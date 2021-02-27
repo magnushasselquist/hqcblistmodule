@@ -93,39 +93,39 @@ class modHelloWorldHelper
 					$select_sql .= " AND " ;
 				}
 		   
-			   switch  ($filter[operator]) {
+			   switch  ($filter['operator']) {
 					case "<>||ISNULL": // CB Not equal to
 					
-						if (!is_numeric($filter[value])) {
+						if (!is_numeric($filter['value'])) {
 							$value = "'".$value."'";
 						}
 						
-						$select_sql .=  "(".$filter[column] . "<> ".$value ." OR ". $filter[column] . " IS NULL)";
+						$select_sql .=  "(".$filter['column'] . "<> ".$value ." OR ". $filter['column'] . " IS NULL)";
 						break;
 						
 					case "NOT REGEXP||ISNULL": // CB  is not regexp
 						
-						if (!is_numeric($filter[value])) {
+						if (!is_numeric($filter['value'])) {
 							$value = "'".$value."'";
 						} 
 						
-						$select_sql .=  "(".$filter[column] . " NOT REGEXP ".$value ." OR ". $filter[column] . " IS NULL)";
+						$select_sql .=  "(".$filter['column'] . " NOT REGEXP ".$value ." OR ". $filter['column'] . " IS NULL)";
 						break;
 						
 					case "NOT LIKE||ISNULL"; //CB Does not contain	
 					
-						if (!is_numeric($filter[value])) {
+						if (!is_numeric($filter['value'])) {
 							$value = "'".$value."'";
 						} 
 						
-						$select_sql .=  "(".$filter[column] . " NOT LIKE ".$value ." OR ". $filter[column] . " IS NULL)";
+						$select_sql .=  "(".$filter['column'] . " NOT LIKE ".$value ." OR ". $filter['column'] . " IS NULL)";
 						break;
 						
 					case "IN"; //CB IN	
 					
 						$i = 0;
 						$include = "";
-						foreach ((explode(",",$filter[value])) as $value) {						
+						foreach ((explode(",",$filter['value'])) as $value) {						
 							if ($i>0)  {
 								$include .= ", " ;
 							}
@@ -137,15 +137,15 @@ class modHelloWorldHelper
 							$include .= "".$value."";
 							$i++; 
 						}
-						$select_sql .=  "".$filter[column] . " IN (". $include .") ";
+						$select_sql .=  "".$filter['column'] . " IN (". $include .") ";
 						break;
 						
 					default:
 					
-						if (!is_numeric($filter[value])) {
+						if (!is_numeric($filter['value'])) {
 							$value = "'".$value."'";
 						} 
-						$select_sql .=  "(".$filter[column]." ".$filter[operator]." ".$value.")";
+						$select_sql .=  "(".$filter['column']." ".$filter['operator']." ".$value.")";
 						break;
 				}
 			$i++; 
