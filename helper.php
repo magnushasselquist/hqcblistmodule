@@ -88,17 +88,20 @@ class modHelloWorldHelper
 		if ($json_a['filter_mode'] == 0) {
 		$i = 0;
 		foreach ($filters_basic as $filter) {
-
+			
+			// If it is not the first filter add AND 
 			if ($i>0)  {
 				$select_sql .= " AND " ;
 			}
-
+			
+			// add qoutes if value is text.
 			if (!is_numeric($filter['value'])) {
 				$value = "'".$filter['value']."'";
 			} else {
 				$value = $filter['value'];	
 			}
-
+			
+			// Replace operators from json if needed else default
 		   switch  ($filter['operator']) {
 				case "<>||ISNULL": // CB Not equal to
 
@@ -119,11 +122,14 @@ class modHelloWorldHelper
 
 					$i = 0;
 					$include = "";
+				   	//loop al the values from the in filter value. Fetch original value so no aurrounding qoutes are present
 					foreach ((explode(",",$filter['value'])) as $value) {						
+						// Start with separator is not first one.
 						if ($i>0)  {
 							$include .= ", " ;
 						}
-
+						
+						// place qoutes if text
 						if (!is_numeric($value)) {
 							$value = "'".$filter['value']."'";
 						} 
@@ -135,8 +141,8 @@ class modHelloWorldHelper
 					break;
 
 				default:
-
-					$select_sql .=  "(".$filter['column']." ".$filter['operator']." ".$filter['value'].")";
+					// Default wat to proces json values to query 
+					$select_sql .=  "(".$filter['column']." ".$filter['operator']." ".$value.")";
 					break;
 			}
 		$i++; 
