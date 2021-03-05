@@ -26,6 +26,12 @@
                		key_field="listid"
                		value_field="title"
                		query="SELECT listid, title FROM #__comprofiler_lists" />
+		<field
+			name="user-limit"
+			type="integer"
+			first="1" last="100" step="1"
+			default="10"
+			label="Number of users to show"	/>	
                   <field
                 		name="text-above"
                 		type="editor"
