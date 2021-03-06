@@ -180,6 +180,9 @@ class modHelloWorldHelper
 	$fetch_sql .= ' GROUP BY u.id';
 	//Add ordering if list is configured for that
 	if ($userlistorder <>'') { $fetch_sql .= " ORDER BY ".$userlistorder; }
+		
+	//Apply limit
+	$fetch_sql .= " LIMIT ".$params->get('user-limit');
 
 	// Now, lets use the final SQL to get all Users from Joomla/CB
 	$query = $fetch_sql;
