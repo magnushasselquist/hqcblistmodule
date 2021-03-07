@@ -196,6 +196,10 @@ class modHelloWorldHelper
 
 	// Now, lets use the final SQL to get all Users from Joomla/CB
 	$query = $fetch_sql;
+			
+	// avoid  Notice Undefined variable:
+	$debug_text ="";
+			
 	if ($list_debug == 1) { $debug_text .= "<p>DEBUG: <pre>".$query."</pre></p>"; }
 	$db->setQuery($query);
 	$persons = $db->loadAssocList();
