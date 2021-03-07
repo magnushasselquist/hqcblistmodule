@@ -183,6 +183,16 @@ class modHelloWorldHelper
 		
 	//Apply limit
 	$fetch_sql .= " LIMIT ".$params->get('user-limit');
+	
+	// autofit or fixed amount of columns
+	if ($params->get('columns') == 0 ) { 
+		$columns= "auto-fit";
+	} 
+	else {
+		$columns= $params->get('columns');
+	}
+		
+	$result .= " <div style=\" margin: 0 auto; display: grid; grid-gap: 0.2rem;grid-template-columns: repeat(". $columns .", minmax(5rem, 1fr));\" class=\"cblist\"> " ;
 
 	// Now, lets use the final SQL to get all Users from Joomla/CB
 	$query = $fetch_sql;
@@ -193,9 +203,12 @@ class modHelloWorldHelper
 		foreach ($persons as $person) { //for every person that is a reciever, lets do an email.
 		 	// $result .= $person['username']."<br/>";
 		 	// Lets loop over the Users and create the output using the Template, replacing [fileds] in Template
-			$result .=  db_field_replace($list_template, $person['id']);
+			$result .= "<div style=\"padding: 5px;\" class=\"cblist-user\" >". db_field_replace($list_template, $person['id']) ."</div >" ;
 		}
 	} else if ($list_debug == 1) { $debug_text .= "<p>DEBUG: Empty list?!</p>"; }
+	
+	$result .= " </div >";
+			
 	$resultcomplete = $list_textabove . $debug_text . $result . $list_textbelow;
 	return $resultcomplete;
 
