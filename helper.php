@@ -17,7 +17,7 @@ function db_field_replace($before_str, $user_id) {
 	$db->setQuery($query);
 	$person = $db->loadAssoc();
 	// get all the fields that could possibly be part of template to be replaced to get us something to loop through. Also add id and user_id as fields.
-	$query = "SELECT name FROM #__comprofiler_fields WHERE #__comprofiler_fields.table = '#__users' OR #__comprofiler_fields.table = '#__comprofiler' UNION SELECT 'id' AS name UNION SELECT 'user_id' AS name";
+	$query = "SELECT name, type FROM #__comprofiler_fields WHERE #__comprofiler_fields.table = '#__users' OR #__comprofiler_fields.table = '#__comprofiler' UNION SELECT 'id' AS name, '' as type UNION SELECT 'user_id' AS name, '' as type";
 	$db->setQuery($query);
 	$fields = $db->loadAssocList();
 
@@ -29,6 +29,11 @@ function db_field_replace($before_str, $user_id) {
 			$fieldtouse = $field['name'];
 			if (isset($person[$fieldtouse])) {
 				$datatoinsert = $person[$fieldtouse];
+				
+				// add the complete url in case of images
+				if ($field['type']=='image') { 
+					$datatoinsert =  JURI::base(). "images/comprofiler/" .$datatoinsert;
+				} 
 	 			$after_str = str_ireplace($paramtofind, $datatoinsert, $after_str);
 	 		} else {
 	 			$after_str = str_ireplace($paramtofind, '', $after_str); // replace the param name with '' if not found.
