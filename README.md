@@ -26,7 +26,7 @@ And the following template example is a more advanced usage:
     ``````// <![CDATA[``````
     ``````var avatar_str = "[avatar]";``````
     ``````if (avatar_str.length > 3) {``````
-    ``````avatar_url = "/images/comprofiler/[avatar]";``````
+    ``````avatar_url = "[avatar]";``````
     ``````} else {``````
     ``````avatar_url = "/components/com_comprofiler/plugin/templates/default/images/avatar/tnnophoto_n.png";``````
     ``````}``````
