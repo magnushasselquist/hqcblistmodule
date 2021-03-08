@@ -191,8 +191,13 @@ class modHelloWorldHelper
 	else {
 		$columns= $params->get('columns');
 	}
+			
+	$minwidth = "5" ;/* prevent errors and give default value when not is numeric*/
+	if (is_numeric($params->get('Minwidth'))) {
+		$minwidth = $params->get('Minwidth') ;
+	}		
 		
-	$result .= " <div style=\" margin: 0 auto; display: grid; grid-gap: 0.2rem;grid-template-columns: repeat(". $columns .", minmax(5rem, 1fr));\" class=\"cblist\"> " ;
+	$result .= " <div style=\" margin: 0 auto; display: grid; grid-gap: 0.2rem;grid-template-columns: repeat(". $columns .", minmax(".$minwidth."rem, 1fr));\" class=\"cblist\"> " ;
 
 	// Now, lets use the final SQL to get all Users from Joomla/CB
 	$query = $fetch_sql;
