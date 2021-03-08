@@ -54,7 +54,12 @@
 				<option value="8">8</option>
 				<option value="9">9</option>
 				<option value="10">10</option>							
-			</field>
+		</field>
+		<field 
+		name="Minwidth" 
+		type="text" default="5" 
+		label="Minimum width column (rem)" 
+		description=""/>
                	 <field
                			name="template"
                			type="editor"
