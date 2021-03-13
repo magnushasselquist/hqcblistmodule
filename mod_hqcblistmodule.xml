@@ -65,7 +65,9 @@
                			type="editor"
                			label="Template for displaying each user. Use [cb_filedname] syntax to include fields."
 					        buttons="false"
+							default="&lt;p&gt; &lt;img src=&quot;[avatar]&quot; alt=&quot;[name]&quot; width=&quot;50&quot; /&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;../cb-profile/[user_id]&quot;&gt;[name]&lt;/a&gt;&lt;/p&gt;"
 					        filter="raw" />
+						
                   <field
                 		name="text-below"
                 		type="editor"
