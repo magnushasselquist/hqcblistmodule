@@ -17,7 +17,7 @@ function db_field_replace($before_str, $user_id) {
 	$db->setQuery($query);
 	$person = $db->loadAssoc();
 	// get all the fields that could possibly be part of template to be replaced to get us something to loop through. Also add id and user_id as fields.
-	$query = "SELECT name FROM #__comprofiler_fields WHERE #__comprofiler_fields.table = '#__users' OR #__comprofiler_fields.table = '#__comprofiler' UNION SELECT 'id' AS name UNION SELECT 'user_id' AS name";
+	$query = "SELECT name, type FROM #__comprofiler_fields WHERE #__comprofiler_fields.table = '#__users' OR #__comprofiler_fields.table = '#__comprofiler' UNION SELECT 'id' AS name, '' as type UNION SELECT 'user_id' AS name, '' as type";
 	$db->setQuery($query);
 	$fields = $db->loadAssocList();
 
@@ -29,6 +29,11 @@ function db_field_replace($before_str, $user_id) {
 			$fieldtouse = $field['name'];
 			if (isset($person[$fieldtouse])) {
 				$datatoinsert = $person[$fieldtouse];
+				
+				// add the complete url in case of images
+				if ($field['type']=='image') { 
+					$datatoinsert =  JURI::base(). "images/comprofiler/" .$datatoinsert;
+				} 
 	 			$after_str = str_ireplace($paramtofind, $datatoinsert, $after_str);
 	 		} else {
 	 			$after_str = str_ireplace($paramtofind, '', $after_str); // replace the param name with '' if not found.
@@ -86,11 +91,68 @@ class modHelloWorldHelper
 		$filters_basic = $json_a['filter_basic'];
 		$filter_advanced = $json_a['filter_advanced'];
 		if ($json_a['filter_mode'] == 0) {
-			foreach($filters_basic as $filter) {
-			     $select_sql .= $filter['column'] . " " . $filter['operator']. " '" . $filter['value'] ."' AND ";
+		$i = 0;
+		foreach ($filters_basic as $filter) {
+			
+			// If it is not the first filter add AND 
+			if ($i>0)  {
+				$select_sql .= " AND " ;
 			}
-			$select_sql = substr($select_sql, 0, -5); //rensa bort den sista AND
+			
+			// add qoutes if value is text.
+			if (!is_numeric($filter['value'])) {
+				$value = "'".$filter['value']."'";
+			} else {
+				$value = $filter['value'];	
+			}
+			
+			// Replace operators from json if needed else default
+		   switch  ($filter['operator']) {
+				case "<>||ISNULL": // CB Not equal to
+
+					$select_sql .=  "(".$filter['column'] . "<> ".$value ." OR ". $filter['column'] . " IS NULL)";
+					break;
+
+				case "NOT REGEXP||ISNULL": // CB  is not regexp
+
+					$select_sql .=  "(".$filter['column'] . " NOT REGEXP ".$value ." OR ". $filter['column'] . " IS NULL)";
+					break;
+
+				case "NOT LIKE||ISNULL"; //CB Does not contain	
+
+					$select_sql .=  "(".$filter['column'] . " NOT LIKE ".$value ." OR ". $filter['column'] . " IS NULL)";
+					break;
+
+				case "IN"; //CB IN	
+
+					$i = 0;
+					$include = "";
+				   	//loop al the values from the in filter value. Fetch original value so no aurrounding qoutes are present
+					foreach ((explode(",",$filter['value'])) as $value) {						
+						// Start with separator is not first one.
+						if ($i>0)  {
+							$include .= ", " ;
+						}
+						
+						// place qoutes if text
+						if (!is_numeric($value)) {
+							$value = "'".$filter['value']."'";
+						} 
+
+						$include .= "".$value."";
+						$i++; 
+					}
+					$select_sql .=  "".$filter['column'] . " IN (". $include .") ";
+					break;
+
+				default:
+					// Default wat to proces json values to query 
+					$select_sql .=  "(".$filter['column']." ".$filter['operator']." ".$value.")";
+					break;
+			}
+		$i++; 
 		}
+		
 		else if ($json_a['filter_mode'] == 1) {
 	             $select_sql = $filter_advanced;
 	    	}
@@ -123,9 +185,31 @@ class modHelloWorldHelper
 	$fetch_sql .= ' GROUP BY u.id';
 	//Add ordering if list is configured for that
 	if ($userlistorder <>'') { $fetch_sql .= " ORDER BY ".$userlistorder; }
+		
+	//Apply limit
+	$fetch_sql .= " LIMIT ".$params->get('user-limit');
+	
+	// autofit or fixed amount of columns
+	if ($params->get('columns') == 0 ) { 
+		$columns= "auto-fit";
+	} 
+	else {
+		$columns= $params->get('columns');
+	}
+			
+	$minwidth = "5" ;/* prevent errors and give default value when not is numeric*/
+	if (is_numeric($params->get('Minwidth'))) {
+		$minwidth = $params->get('Minwidth') ;
+	}		
+		
+	$result .= " <div style=\" margin: 0 auto; display: grid; grid-gap: 0.2rem;grid-template-columns: repeat(". $columns .", minmax(".$minwidth."rem, 1fr));\" class=\"cblist\"> " ;
 
 	// Now, lets use the final SQL to get all Users from Joomla/CB
 	$query = $fetch_sql;
+			
+	// avoid  Notice Undefined variable:
+	$debug_text ="";
+			
 	if ($list_debug == 1) { $debug_text .= "<p>DEBUG: <pre>".$query."</pre></p>"; }
 	$db->setQuery($query);
 	$persons = $db->loadAssocList();
@@ -133,9 +217,12 @@ class modHelloWorldHelper
 		foreach ($persons as $person) { //for every person that is a reciever, lets do an email.
 		 	// $result .= $person['username']."<br/>";
 		 	// Lets loop over the Users and create the output using the Template, replacing [fileds] in Template
-			$result .=  db_field_replace($list_template, $person['id']);
+			$result .= "<div style=\"padding: 5px;\" class=\"cblist-user\" >". db_field_replace($list_template, $person['id']) ."</div >" ;
 		}
 	} else if ($list_debug == 1) { $debug_text .= "<p>DEBUG: Empty list?!</p>"; }
+	
+	$result .= " </div >";
+			
 	$resultcomplete = $list_textabove . $debug_text . $result . $list_textbelow;
 	return $resultcomplete;
 
