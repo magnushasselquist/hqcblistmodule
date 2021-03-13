@@ -81,7 +81,10 @@ class modHelloWorldHelper
 		// Load the List row.
 		$row = $db->loadAssoc();
 		$select_sql_raw = $row['params'];
-		$select_sql =""; //declare variable		
+		$select_sql =""; //declare variable	
+
+		// avoid  Notice Undefined variable:
+		$debug_text ="";
 
 		if ($list_debug == 1) { $debug_text .= "<p>DEBUG: <pre>".$select_sql_raw."</pre></p>"; }
 
@@ -91,66 +94,67 @@ class modHelloWorldHelper
 		$filters_basic = $json_a['filter_basic'];
 		$filter_advanced = $json_a['filter_advanced'];
 		if ($json_a['filter_mode'] == 0) {
-		$i = 0;
-		foreach ($filters_basic as $filter) {
-			
-			// If it is not the first filter add AND 
-			if ($i>0)  {
-				$select_sql .= " AND " ;
-			}
-			
-			// add qoutes if value is text.
-			if (!is_numeric($filter['value'])) {
-				$value = "'".$filter['value']."'";
-			} else {
-				$value = $filter['value'];	
-			}
-			
-			// Replace operators from json if needed else default
-		   switch  ($filter['operator']) {
-				case "<>||ISNULL": // CB Not equal to
+			$i = 0;
+			foreach ($filters_basic as $filter) {
+				
+				// If it is not the first filter add AND 
+				if ($i>0)  {
+					$select_sql .= " AND " ;
+				}
+				
+				// add qoutes if value is text.
+				if (!is_numeric($filter['value'])) {
+					$value = "'".$filter['value']."'";
+				} else {
+					$value = $filter['value'];	
+				}
+				
+				// Replace operators from json if needed else default
+			   switch  ($filter['operator']) {
+					case "<>||ISNULL": // CB Not equal to
 
-					$select_sql .=  "(".$filter['column'] . "<> ".$value ." OR ". $filter['column'] . " IS NULL)";
-					break;
+						$select_sql .=  "(".$filter['column'] . "<> ".$value ." OR ". $filter['column'] . " IS NULL)";
+						break;
 
-				case "NOT REGEXP||ISNULL": // CB  is not regexp
+					case "NOT REGEXP||ISNULL": // CB  is not regexp
 
-					$select_sql .=  "(".$filter['column'] . " NOT REGEXP ".$value ." OR ". $filter['column'] . " IS NULL)";
-					break;
+						$select_sql .=  "(".$filter['column'] . " NOT REGEXP ".$value ." OR ". $filter['column'] . " IS NULL)";
+						break;
 
-				case "NOT LIKE||ISNULL"; //CB Does not contain	
+					case "NOT LIKE||ISNULL"; //CB Does not contain	
 
-					$select_sql .=  "(".$filter['column'] . " NOT LIKE ".$value ." OR ". $filter['column'] . " IS NULL)";
-					break;
+						$select_sql .=  "(".$filter['column'] . " NOT LIKE ".$value ." OR ". $filter['column'] . " IS NULL)";
+						break;
 
-				case "IN"; //CB IN	
+					case "IN"; //CB IN	
 
-					$i = 0;
-					$include = "";
-				   	//loop al the values from the in filter value. Fetch original value so no aurrounding qoutes are present
-					foreach ((explode(",",$filter['value'])) as $value) {						
-						// Start with separator is not first one.
-						if ($i>0)  {
-							$include .= ", " ;
+						$i = 0;
+						$include = "";
+						//loop al the values from the in filter value. Fetch original value so no aurrounding qoutes are present
+						foreach ((explode(",",$filter['value'])) as $value) {						
+							// Start with separator is not first one.
+							if ($i>0)  {
+								$include .= ", " ;
+							}
+							
+							// place qoutes if text
+							if (!is_numeric($value)) {
+								$value = "'".$filter['value']."'";
+							} 
+
+							$include .= "".$value."";
+							$i++; 
 						}
-						
-						// place qoutes if text
-						if (!is_numeric($value)) {
-							$value = "'".$filter['value']."'";
-						} 
+						$select_sql .=  "".$filter['column'] . " IN (". $include .") ";
+						break;
 
-						$include .= "".$value."";
-						$i++; 
-					}
-					$select_sql .=  "".$filter['column'] . " IN (". $include .") ";
-					break;
-
-				default:
-					// Default wat to proces json values to query 
-					$select_sql .=  "(".$filter['column']." ".$filter['operator']." ".$value.")";
-					break;
+					default:
+						// Default wat to proces json values to query 
+						$select_sql .=  "(".$filter['column']." ".$filter['operator']." ".$value.")";
+						break;
+				}
+			$i++; 
 			}
-		$i++; 
 		}
 		
 		else if ($json_a['filter_mode'] == 1) {
@@ -206,10 +210,7 @@ class modHelloWorldHelper
 
 	// Now, lets use the final SQL to get all Users from Joomla/CB
 	$query = $fetch_sql;
-			
-	// avoid  Notice Undefined variable:
-	$debug_text ="";
-			
+					
 	if ($list_debug == 1) { $debug_text .= "<p>DEBUG: <pre>".$query."</pre></p>"; }
 	$db->setQuery($query);
 	$persons = $db->loadAssocList();
