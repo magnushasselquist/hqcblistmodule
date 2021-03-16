@@ -2,7 +2,7 @@
 <updates>
     <update>
         <name>HQ CB List for Community Builder</name>
-        <description>HQ List module for Community Builder</description>
+        <description>HQ List for Community Builder</description>
         <element>hqcblistmodule</element>
         <type>module</type>
         <version>2.2</version>
@@ -15,6 +15,7 @@
         </tags>
         <maintainer>Magnus Hasselquist</maintainer>
         <maintainerurl>https://github.com/magnushasselquist</maintainerurl>
-        <targetplatform name="joomla" version="3.1"/>
+        <targetplatform name="joomla" version="3.9"/>
+        <client>site</client>
     </update>
 </updates>
