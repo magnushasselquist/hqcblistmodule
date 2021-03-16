@@ -3,7 +3,7 @@
     <update>
         <name>HQ CB List for Community Builder</name>
         <description>HQ List for Community Builder</description>
-        <element>hqcblistmodule</element>
+        <element>mod_hqcblistmodule</element>
         <type>module</type>
         <version>2.2</version>
         <infourl title="Release notes">http://magnushasselquist.github.io/hqcblistmodule/</infourl>
