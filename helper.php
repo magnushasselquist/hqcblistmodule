@@ -190,15 +190,22 @@ class modHelloWorldHelper
 	//Add ordering if list is configured for that
 	if ($userlistorder <>'') { $fetch_sql .= " ORDER BY ".$userlistorder; }
 		
-	//Apply limit
-	$fetch_sql .= " LIMIT ".$params->get('user-limit');
+	//Apply limit if there is a value
+	if(isset($params->get('user-limit')){
+		$fetch_sql .= " LIMIT ".$params->get('user-limit');
+	}
+	
 	
 	// autofit or fixed amount of columns
-	if ($params->get('columns') == 0 ) { 
+	 if(isset($params->get('columns')){
+		if ($params->get('columns') == 0 ) { 
+			$columns= "auto-fit";
+		} 
+		else {
+			$columns= $params->get('columns');
+		}
+	 } ELSE {
 		$columns= "auto-fit";
-	} 
-	else {
-		$columns= $params->get('columns');
 	}
 			
 	$minwidth = "5" ;/* prevent errors and give default value when not is numeric*/
