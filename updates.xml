@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<update>
-    <name>HQ List Mailer for Community Builder</name>
-    <description>HQ List Mailer for Community Builder</description>
-    <element>hqcblistmailer</element>
-    <type>component</type>
-    <version>2.2</version>
-    <infourl title="Release notes">http://magnushasselquist.github.io/hqcblistmailer/</infourl>
-    <downloads>
-        <downloadurl type="full" format="zip">https://github.com/magnushasselquist/hqcblistmailer/zipball/master</downloadurl>
-    </downloads>
-    <tags>
-        <tag>stable</tag>
-    </tags>
-    <maintainer>Magnus Hasselquist</maintainer>
-    <maintainerurl>https://github.com/magnushasselquist</maintainerurl>
-    <targetplatform name="joomla" version="3.1"/>
-</update>
+<updates>
+    <update>
+        <name>HQ CB List for Community Builder</name>
+        <description>HQ List for Community Builder</description>
+        <element>mod_hqcblistmodule</element>
+        <type>module</type>
+        <version>2.2</version>
+        <infourl title="Release notes">http://magnushasselquist.github.io/hqcblistmodule/</infourl>
+        <downloads>
+            <downloadurl type="full" format="zip">https://github.com/magnushasselquist/hqcblistmodule/zipball/master</downloadurl>
+        </downloads>
+        <tags>
+            <tag>stable</tag>
+        </tags>
+        <maintainer>Magnus Hasselquist</maintainer>
+        <maintainerurl>https://github.com/magnushasselquist</maintainerurl>
+        <targetplatform name="joomla" version="3.9"/>
+        <client>site</client>
+    </update>
+</updates>
