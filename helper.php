@@ -219,7 +219,7 @@ class modHelloWorldHelper
 		foreach ($persons as $person) { //for every person that is a reciever, lets do an email.
 		 	// $result .= $person['username']."<br/>";
 		 	// Lets loop over the Users and create the output using the Template, replacing [fileds] in Template
-			$result .= "<div style=\"padding: 5px;\" class=\"cblist-user\" >". db_field_replace($list_template, $person['id']) ."</div >" ;
+			$result .= "<div style=\"padding: 5px;overflow-wrap: break-word;\" class=\"cblist-user\" >". db_field_replace($list_template, $person['id']) ."</div >" ;
 		}
 	} else if ($list_debug == 1) { $debug_text .= "<p>DEBUG: Empty list?!</p>"; }
 	
