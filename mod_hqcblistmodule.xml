@@ -31,6 +31,12 @@
 			type="integer"
 			first="1" last="100" step="1"
 			default="10"
+			label="Number of users to show"	/>
+		<field
+			name="user-limit"
+			type="integer"
+			first="1" last="100" step="1"
+			default="10"
 			label="Number of users to show"	/>	
                   <field
                 		name="text-above"
