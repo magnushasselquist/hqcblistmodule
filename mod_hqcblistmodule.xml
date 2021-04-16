@@ -22,7 +22,7 @@
                		name="listid"
                		type="sql"
                		default=""
-               		label="Select the CB List to be presented in the module"
+               		label="SELECT the CB List to be presented in the module"
                		key_field="listid"
                		value_field="title"
                		query="SELECT listid, title FROM #__comprofiler_lists" />
@@ -39,7 +39,7 @@
                		label="Order by field"
                		key_field="id"
                		value_field="title"
-               		query="Select 0 as sort, 'list_default' as id, 'List default' as title UNION SELECT 1 as sort, name as id, name as title FROM #__comprofiler_fields order by sort,title asc" />
+               		query="SELECT 0 AS sort, 'list_default' AS id, 'List default' AS title UNION SELECT 1 AS sort, name AS id, name AS title FROM #__comprofiler_fields WHERE published=1 ORDER BY sort,title ASC" />
 			<field 
 					name="sortorder" type="list"
 					default="list"
