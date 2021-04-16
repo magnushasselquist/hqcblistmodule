@@ -32,12 +32,24 @@
 			first="1" last="100" step="1"
 			default="10"
 			label="Number of users to show"	/>
-		<field
-			name="user-limit"
-			type="integer"
-			first="1" last="100" step="1"
-			default="10"
-			label="Number of users to show"	/>	
+			<field
+               		name="orderby"
+               		type="sql"
+               		default="list default"
+               		label="Order by field"
+               		key_field="id"
+               		value_field="title"
+               		query="Select 0 as sort, 'list_default' as id, 'List default' as title UNION SELECT 1 as sort, name as id, name as title FROM #__comprofiler_fields order by sort,title asc" />
+			<field 
+					name="sortorder" type="list"
+					default="list"
+					label="Sort order"
+				>
+				<option value="list_default">List default</option>
+				<option value="asc">Ascending </option>
+				<option value="desc">Descending</option>
+				<option value="random">Random</option>				
+			</field>	
                   <field
                 		name="text-above"
                 		type="editor"
