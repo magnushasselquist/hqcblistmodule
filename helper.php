@@ -123,7 +123,14 @@ class modHelloWorldHelper
 
 						case "NOT LIKE||ISNULL"; //CB Does not contain	
 
+							$value = "'%" . trim($value,'\'"') . "%'"; // any combination of ' and "
 							$select_sql .=  "(".$filter['column'] . " NOT LIKE ".$value ." OR ". $filter['column'] . " IS NULL)";
+							break;
+						   
+						case "LIKE"; //CB Does contain	
+
+							$value = "'%" . trim($value,'\'"') . "%'"; // any combination of ' and "
+							$select_sql =  "(".$filter['column'] . " LIKE " . $value . ")"	; 		
 							break;
 
 						case "IN"; //CB IN	
