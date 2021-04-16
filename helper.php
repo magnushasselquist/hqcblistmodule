@@ -57,7 +57,8 @@ class modHelloWorldHelper
     		$result=''; //reset result
 		// Get the parameters
 		$list_id = $params->get('listid');
-		$list_order = $params->get('order');
+		$list_orderby = $params->get('orderby');
+		$list_sortorder = $params->get('sortorder');
 		$list_template = $params->get('template');
 		$list_textabove = $params->get('text-above');
 		$list_textbelow = $params->get('text-below');
@@ -163,20 +164,25 @@ class modHelloWorldHelper
 	             $select_sql = $filter_advanced;
 	    	}
 
-	// Sort order 
-	   switch  ($list_order) {
+	if ($list_orderby=='list_default' or $list_orderby=='')  {
+		$list_orderby = $json_a['sort_basic'][0]['column']; 
+	}
+	
+
+		// Sort order 
+	   switch  ($list_sortorder) {
 		case "asc": 
-			$userlistorder = $json_a['sort_basic'][0]['column'] . " " . $list_order;
+			$userlistorder = $list_orderby . " " . $list_sortorder;
 			break;
 		case "desc": 
-			$userlistorder = $json_a['sort_basic'][0]['column'] . " " . $list_order;
+			$userlistorder = $list_orderby . " " . $list_sortorder;
 			break;
 		case "random": 
 			$userlistorder = 'rand()';
 			break;
 		default:
 			// Default way to order
-			$userlistorder = $json_a['sort_basic'][0]['column'] . " " . $json_a['sort_basic'][0]['direction'];
+			$userlistorder = $list_orderby . " " . $json_a['sort_basic'][0]['direction'];
 			break;
 	   }
 
