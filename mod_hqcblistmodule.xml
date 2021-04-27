@@ -25,7 +25,7 @@
                		label="SELECT the CB List to be presented in the module"
                		key_field="listid"
                		value_field="title"
-               		query="SELECT listid, title FROM #__comprofiler_lists" />
+               		query="SELECT listid, title FROM #__comprofiler_lists where published=1" />
 		<field
 			name="user-limit"
 			type="integer"
