@@ -57,6 +57,8 @@ class modHelloWorldHelper
     		$result=''; //reset result
 		// Get the parameters
 		$list_id = $params->get('listid');
+		$list_orderby = $params->get('orderby');
+		$list_sortorder = $params->get('sortorder');
 		$list_template = $params->get('template');
 		$list_textabove = $params->get('text-above');
 		$list_textbelow = $params->get('text-below');
@@ -162,9 +164,27 @@ class modHelloWorldHelper
 	             $select_sql = $filter_advanced;
 	    	}
 
-	$userlistorder = $json_a['sort_basic'][0]['column'] . " " . $json_a['sort_basic'][0]['direction'];
-	// echo "ORDER: " . $userlistorder .".";
-	// echo "DEC :".$select_sql;
+	if ($list_orderby=='list_default' or $list_orderby=='')  {
+		$list_orderby = $json_a['sort_basic'][0]['column']; 
+	}
+	
+
+		// Sort order 
+	   switch  ($list_sortorder) {
+		case "asc": 
+			$userlistorder = $list_orderby . " " . $list_sortorder;
+			break;
+		case "desc": 
+			$userlistorder = $list_orderby . " " . $list_sortorder;
+			break;
+		case "random": 
+			$userlistorder = 'rand()';
+			break;
+		default:
+			// Default way to order
+			$userlistorder = $list_orderby . " " . $json_a['sort_basic'][0]['direction'];
+			break;
+	   }
 
 	// Set a base-sql for connecting users, fields and lists
 // OLD	$fetch_sql = "select * from #__users inner join #__comprofiler on #__users.id = #__comprofiler.user_id where #__users.block = 0"; //TODO check block or something else?
