@@ -196,6 +196,7 @@ class modHelloWorldHelper
 	// Set a base-sql for connecting users, fields and lists
 // OLD	$fetch_sql = "select * from #__users inner join #__comprofiler on #__users.id = #__comprofiler.user_id where #__users.block = 0"; //TODO check block or something else?
         $usergroupids = str_replace("|*|", ",", $row['usergroupids']); //CMJ ADDED
+	$usergroupids = trim($usergroupids,','); // prevent that the range starts (or ends) with a comma if you also have selected '--- Select User group (CTR/CMD-Click: multiple)---' at the usergroups
 
         $list_show_unapproved = $json_a['list_show_unapproved'];
         $list_show_blocked = $json_a['list_show_blocked'];
