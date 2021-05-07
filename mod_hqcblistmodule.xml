@@ -3,8 +3,8 @@
     <name>HQ CB List for Community Builder</name>
     <author>Magnus Hasselquist</author>
     <authorUrl>https://github.com/magnushasselquist</authorUrl>
-    <version>2.2</version>
-    <creationDate>2021-03-15</creationDate>
+    <version>2.3</version>
+    <creationDate>2021-05-07</creationDate>
     <license>GNU General Public License version 2 or later</license>
     <description>Displaying Users from a selected CB List in a Module. This version is for CB 2</description>
     <files>
