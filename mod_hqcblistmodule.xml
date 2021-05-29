@@ -15,6 +15,9 @@
         <filename>tmpl/default.php</filename>
         <filename>tmpl/index.html</filename>
     </files>
+	<languages folder="language">
+    <language tag="en-GB">en-GB.mod_hqcblistmodule.ini</language>
+    </languages>
     <config>
     	<fields name="params">
     		<fieldset name="basic">
@@ -85,6 +88,39 @@
 					        buttons="false"
 							default="&lt;p&gt; &lt;img src=&quot;[avatar]&quot; alt=&quot;[name]&quot; width=&quot;50&quot; /&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;../cb-profile/[user_id]&quot;&gt;[name]&lt;/a&gt;&lt;/p&gt;"
 					        filter="raw" />
+					
+							<field
+							name="image_rules"
+							type="subform"
+							
+							label="Image rule"
+							description="Here you can create a rule for each image"
+							multiple="true"
+							min="0"
+							max="10"
+							>
+							<form>
+								<field
+									name="tag_name"
+									default="avatar"
+									type="text"
+									label="Image name"
+									description=""
+									/>
+								<field
+									name="htmlcode"
+									type="textarea"
+									default="&lt;a href=&amp;quot;../cb-profile/[user_id]&amp;quot;&gt;&lt;img src=&amp;quot;[avatar]&amp;quot; alt=&amp;quot;[name]&amp;quot; width=&amp;quot;50&amp;quot; height=&amp;quot;60&amp;quot; /&gt;&lt;/a&gt;"
+									label="html code to replace image tag with"
+									filter="safehtml"
+									description="Insert here your htmlcode use [IMAGE] to insert the image link"
+									cols="40"
+									rows="3"
+									/>
+							</form>
+						</field>	
+							
+							
 						
                   <field
                 		name="text-below"

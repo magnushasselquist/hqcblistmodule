@@ -8,7 +8,8 @@
 // No direct access
 defined('_JEXEC') or die;
 
-function db_field_replace($before_str, $user_id) {
+
+function db_field_replace($before_str, $user_id,$image_rules,$fields) {
 	$db = JFactory::getDbo();
 	// $query = "SET CHARACTER SET utf8";
 	// $db->setQuery($query);
@@ -16,10 +17,6 @@ function db_field_replace($before_str, $user_id) {
 	// echo $query;
 	$db->setQuery($query);
 	$person = $db->loadAssoc();
-	// get all the fields that could possibly be part of template to be replaced to get us something to loop through. Also add id and user_id as fields.
-	$query = "SELECT name, type FROM #__comprofiler_fields WHERE #__comprofiler_fields.table = '#__users' OR #__comprofiler_fields.table = '#__comprofiler' UNION SELECT 'id' AS name, '' as type UNION SELECT 'user_id' AS name, '' as type";
-	$db->setQuery($query);
-	$fields = $db->loadAssocList();
 
 	$after_str = $before_str;
 	// echo $before_str;
@@ -32,14 +29,44 @@ function db_field_replace($before_str, $user_id) {
 				
 				// add the complete url in case of images
 				if ($field['type']=='image') { 
-					$datatoinsert =  JURI::base(). "images/comprofiler/" .$datatoinsert;
+											
+					// check is image filename is not empty
+					//check if the image is also approved by checking the IMAGEapproved column
+					if (  !empty($datatoinsert) and $person[$fieldtouse.'approved']==1) {
+							
+							//url to the default canvas images are incorrect in stored in the database 
+							if ($fieldtouse=='canvas') {
+								$datatoinsert = str_ireplace('Gallery/', 'gallery/canvas/', $datatoinsert);
+							} 
+							
+							//create the full image path
+							$datatoinsert =  JURI::base(). "images/comprofiler/" .$datatoinsert;
+												
+							//echo array_search($fieldtouse,array_column($image_rules,'tag_name'));
+							if (null !==( array_search($fieldtouse,array_column($image_rules,'tag_name')) )) {				
+								foreach ($image_rules as $rule)	{
+									if (strtolower($rule['tag_name']) == $fieldtouse) {
+
+										$datatoinsert = str_ireplace($paramtofind, $datatoinsert, $rule['htmlcode']);
+									}	
+								} 
+							}
+					} else {
+					
+						// If image is not approved remove the tag
+						$after_str = str_ireplace($paramtofind, '', $after_str); // replace the param name with '' if not found.					
+					}
 				} 
+				
 	 			$after_str = str_ireplace($paramtofind, $datatoinsert, $after_str);
 	 		} else {
+				
 	 			$after_str = str_ireplace($paramtofind, '', $after_str); // replace the param name with '' if not found.
-			};
+				
+			}
 		}
 	}
+	
 	return $after_str;
 }
 
@@ -51,9 +78,35 @@ class modHelloWorldHelper
      * @param array $params An object containing the module parameters
      * @access public
      */
+	 
+
 
 	public static function getHello( $params )
 	{
+		
+		//retrieve $image_rules
+		$subform = $params->get('image_rules');
+		$arr = (array) $subform;
+		
+	
+		$image_rules = array();
+		$i=0;
+		foreach ($arr as $value)
+		{
+			$image_rules[$i]['tag_name']= strtolower($value->tag_name);
+			$image_rules[$i]['htmlcode'] = $value->htmlcode;
+			$i++;
+		}
+		
+		
+		// get all the fields that could possibly be part of template to be replaced to get us something to loop through. Also add id and user_id as fields.
+		$db = JFactory::getDbo();
+		$query = "SELECT name, type FROM #__comprofiler_fields WHERE #__comprofiler_fields.table = '#__users' OR #__comprofiler_fields.table = '#__comprofiler' UNION SELECT 'id' AS name, '' as type UNION SELECT 'user_id' AS name, '' as type ";
+		$query .=  " order by FIELD(type,'datetime','image') desc";// retrieve fields from type images as first. this way other tags  in the htmlcode then from the imagewill also be replaced
+		$db->setQuery($query);
+		$fields = $db->loadAssocList();
+		
+		
     		$result=''; //reset result
 		// Get the parameters
 		$list_id = $params->get('listid');
@@ -194,8 +247,7 @@ class modHelloWorldHelper
 	   }
 
 	// Set a base-sql for connecting users, fields and lists
-// OLD	$fetch_sql = "select * from #__users inner join #__comprofiler on #__users.id = #__comprofiler.user_id where #__users.block = 0"; //TODO check block or something else?
-        $usergroupids = str_replace("|*|", ",", $row['usergroupids']); //CMJ ADDED
+    $usergroupids = str_replace("|*|", ",", $row['usergroupids']); //CMJ ADDED
 	$usergroupids = trim($usergroupids,','); // prevent that the range starts (or ends) with a comma if you also have selected '--- Select User group (CTR/CMD-Click: multiple)---' at the usergroups
 
         $list_show_unapproved = $json_a['list_show_unapproved'];
@@ -207,15 +259,11 @@ class modHelloWorldHelper
         if ($list_show_unconfirmed == 0) {$fetch_sql.=" AND ue.confirmed = 1 ";}
 
 
-	// add "having" only if needed
-//OLD	if ($select_sql <>' ') $fetch_sql = $fetch_sql . " HAVING ";
-        if ($select_sql <>'') $fetch_sql = $fetch_sql . " AND (" . $select_sql . ")";
-
-	// Combine the final SQL for the selected list
-//OLD 	$fetch_sql = $fetch_sql . $select_sql;
+	// add CB list filters only if there are any
+     if ($select_sql <>'') $fetch_sql = $fetch_sql . " AND (" . $select_sql . ")";
 
 	// echo $fetch_sql . "<br>";
-	$fetch_sql .= ' GROUP BY u.id';
+	//$fetch_sql .= ' GROUP BY u.id';
 	//Add ordering if list is configured for that
 	if ($userlistorder <>'') { $fetch_sql .= " ORDER BY ".$userlistorder; }
 		
@@ -247,7 +295,7 @@ class modHelloWorldHelper
 		foreach ($persons as $person) { //for every person that is a reciever, lets do an email.
 		 	// $result .= $person['username']."<br/>";
 		 	// Lets loop over the Users and create the output using the Template, replacing [fileds] in Template
-			$result .= "<div style=\"padding: 5px;overflow-wrap: break-word;\" class=\"cblist-user\" >". db_field_replace($list_template, $person['id']) ."</div >" ;
+			$result .= "<div style=\"padding: 5px;overflow-wrap: break-word;\" class=\"cblist-user\" >". db_field_replace($list_template, $person['id'],$image_rules,$fields) ."</div >" ;
 		}
 	} else if ($list_debug == 1) { $debug_text .= "<p>DEBUG: Empty list?!</p>"; }
 	
