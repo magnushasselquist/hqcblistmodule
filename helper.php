@@ -9,68 +9,97 @@
 defined('_JEXEC') or die;
 
 
-function db_field_replace($before_str, $user_id,$image_rules,$fields) {
+function checkString(array $arr, $str) {
+
+  $str = preg_replace( array('/[^ \w]+/', '/\s+/'), ' ', strtolower($str) ); // Remove Special Characters and extra spaces -or- convert to LowerCase
+
+  $matchedString = array_intersect( explode(' ', $str), $arr);
+
+  if ( count($matchedString) > 0 ) {
+    return true;
+  }
+  return false;
+}
+
+
+function db_field_replace($before_str, $user_id,$rules,$fields,$search_paramtofind) {
+	
+	//Get data from current user
 	$db = JFactory::getDbo();
-	// $query = "SET CHARACTER SET utf8";
-	// $db->setQuery($query);
 	$query = "select * from #__users inner join #__comprofiler on #__users.id = #__comprofiler.user_id WHERE #__users.id =".$user_id;
 	// echo $query;
 	$db->setQuery($query);
 	$person = $db->loadAssoc();
-
+	
 	$after_str = $before_str;
-	// echo $before_str;
-	if (!empty($fields)){
+
+
+	// The while will only run multiple times if you have complex rules like using [canvas] in your avatar htmlcode.
+	// With this while loop we are certain that all paramtofind will be replaced. 
+	$i=0; 
+	while ((str_replace($search_paramtofind, '', $after_str) !== $after_str) and $i<>5){	
+		$i++; // safety count to stop the loop if the user created one. While will run expected once or twice to replace everything.
+		
 		foreach ($fields as $field) { //for every field that may be in the before_str
 			$paramtofind = "[".$field['name']."]";
 			$fieldtouse = $field['name'];
-			if (isset($person[$fieldtouse])) {
-				$datatoinsert = $person[$fieldtouse];
-				
-				// add the complete url in case of images
-				if ($field['type']=='image') { 
-											
-					// check is image filename is not empty
-					//check if the image is also approved by checking the IMAGEapproved column
-					if (  !empty($datatoinsert) and $person[$fieldtouse.'approved']==1) {
-							
-							//url to the default canvas images are incorrect in stored in the database 
-							if ($fieldtouse=='canvas') {
-								$datatoinsert = str_ireplace('Gallery/', 'gallery/canvas/', $datatoinsert);
-							} 
-							
-							//create the full image path
-							$datatoinsert =  JURI::base(). "images/comprofiler/" .$datatoinsert;
-												
-							//echo array_search($fieldtouse,array_column($image_rules,'tag_name'));
-							if (null !==( array_search($fieldtouse,array_column($image_rules,'tag_name')) )) {				
-								foreach ($image_rules as $rule)	{
-									if (strtolower($rule['tag_name']) == $fieldtouse) {
 
-										$datatoinsert = str_ireplace($paramtofind, $datatoinsert, $rule['htmlcode']);
-									}	
-								} 
-							}
-					} else {
+			$datatoinsert = '';
+			//check if the fieldtouse exist (or is null)
+			if (isset($person[$fieldtouse]) ) {
+				$datatoinsert = $person[$fieldtouse];
+			} 
+			
+
 					
-						// If image is not approved remove the tag
-						$after_str = str_ireplace($paramtofind, '', $after_str); // replace the param name with '' if not found.					
-					}
-				} 
+			// if it is an image check the approved and create full url
+			$show = 'yes';
+			if ($field['type']=='image') {
 				
-	 			$after_str = str_ireplace($paramtofind, $datatoinsert, $after_str);
-	 		} else {
-				
-	 			$after_str = str_ireplace($paramtofind, '', $after_str); // replace the param name with '' if not found.
-				
+				if ( $person[$fieldtouse.'approved']==0 or (empty($datatoinsert)) ) {
+					$show = 'no';
+				} else {
+					//url to the default canvas images are incorrect in stored in the database 
+					if ($fieldtouse=='canvas') {
+						$datatoinsert = str_ireplace('Gallery/', 'gallery/canvas/', $datatoinsert);
+					} 
+					//create the full image path
+					$datatoinsert =  JURI::base(). "images/comprofiler/" .$datatoinsert;
+				}
 			}
-		}
-	}
+			
+
+			//check if there is a rule for this field
+			if (null !==(array_search($fieldtouse,array_column($rules,'tag_name'))) ) {
+				
+				//loop through the rules to find the rule	
+				foreach ($rules as $rule)	{
+				
+					// If the rule is found:
+					if (strtolower($rule['tag_name']) == $fieldtouse) {
+						
+						// check if show still true and data is not empty or that it is a custom tag created in the module.
+						if ($show == 'yes' and ((!empty($datatoinsert)) or $field['type']=='custom') ) {
+							$datatoinsert = str_ireplace($paramtofind, $datatoinsert, $rule['htmlcode']);
+							
+						} else {	
+							$datatoinsert = str_ireplace($paramtofind, $datatoinsert, $rule['htmlcode_no']);
+							
+						}
+					} 
+				}  	
+			} 
+				 
+			$after_str = str_ireplace($paramtofind, $datatoinsert, $after_str); // replace the param name with '' if not found.
+					
+		} // end for each fields
+	}//  end while
 	
 	return $after_str;
+	
 }
 
-class modHelloWorldHelper
+class modcbListHelper
 {
     /**
      * Retrieves the Result
@@ -81,33 +110,50 @@ class modHelloWorldHelper
 	 
 
 
-	public static function getHello( $params )
+	public static function getData( $params )
 	{
 		
-		//retrieve $image_rules
-		$subform = $params->get('image_rules');
+		//retrieve $rules
+		$subform = $params->get('rules');
 		$arr = (array) $subform;
 		
-	
-		$image_rules = array();
+		$rules = array();
 		$i=0;
+		$additional_names = '';
 		foreach ($arr as $value)
 		{
-			$image_rules[$i]['tag_name']= strtolower($value->tag_name);
-			$image_rules[$i]['htmlcode'] = $value->htmlcode;
+			$rules[$i]['tag_name']= strtolower($value->tag_name);
+			$rules[$i]['htmlcode'] = $value->htmlcode;
+			$rules[$i]['htmlcode_no'] = $value->htmlcode_no;
+			
+			$additional_names .= " UNION SELECT '". strtolower($value->tag_name). "' AS name, 'custom' as type  ";
+			
 			$i++;
 		}
 		
 		
 		// get all the fields that could possibly be part of template to be replaced to get us something to loop through. Also add id and user_id as fields.
 		$db = JFactory::getDbo();
-		$query = "SELECT name, type FROM #__comprofiler_fields WHERE #__comprofiler_fields.table = '#__users' OR #__comprofiler_fields.table = '#__comprofiler' UNION SELECT 'id' AS name, '' as type UNION SELECT 'user_id' AS name, '' as type ";
-		$query .=  " order by FIELD(type,'datetime','image') desc";// retrieve fields from type images as first. this way other tags  in the htmlcode then from the imagewill also be replaced
+		$query = "SELECT name, type FROM #__comprofiler_fields WHERE (#__comprofiler_fields.table = '#__users' OR #__comprofiler_fields.table = '#__comprofiler') and name not in ('password','params')
+			UNION SELECT 'id' AS name, '' as type 
+			UNION SELECT 'user_id' AS name, '' as type  ";
+		// add additional names created in the parameters 
+		$query .= $additional_names ;
+		// retrieve fields from type images as first. this way other tags in the htmlcode then from the image will also be replaced without additional while loop
+		$query .=  " order by FIELD(type,'datetime','image') desc";
 		$db->setQuery($query);
 		$fields = $db->loadAssocList();
 		
+		// create an one row array with paramtofind to use for the while check
+		$search_paramtofind = array ();
+		foreach ($fields as $field) {
+			$search_paramtofind[] = "[".$field['name']."]";
+		}
+
 		
-    		$result=''; //reset result
+		
+
+    	$result=''; //reset result
 		// Get the parameters
 		$list_id = $params->get('listid');
 		$list_orderby = $params->get('orderby');
@@ -253,7 +299,7 @@ class modHelloWorldHelper
         $list_show_unapproved = $json_a['list_show_unapproved'];
         $list_show_blocked = $json_a['list_show_blocked'];
         $list_show_unconfirmed = $json_a['list_show_unconfirmed'];
-        $fetch_sql = "SELECT u.*, ue.* FROM #__users u JOIN #__user_usergroup_map g ON g.`user_id` = u.`id` JOIN #__comprofiler ue ON ue.`id` = u.`id` WHERE g.group_id IN (".$usergroupids.")";
+        $fetch_sql = "SELECT ue.id FROM #__users u JOIN #__user_usergroup_map g ON g.`user_id` = u.`id` JOIN #__comprofiler ue ON ue.`id` = u.`id` WHERE g.group_id IN (".$usergroupids.")";
         if ($list_show_blocked == 0) {$fetch_sql.=" AND u.block = 0 ";}
         if ($list_show_unapproved == 0) {$fetch_sql.=" AND ue.approved = 1 ";} 
         if ($list_show_unconfirmed == 0) {$fetch_sql.=" AND ue.confirmed = 1 ";}
@@ -295,7 +341,7 @@ class modHelloWorldHelper
 		foreach ($persons as $person) { //for every person that is a reciever, lets do an email.
 		 	// $result .= $person['username']."<br/>";
 		 	// Lets loop over the Users and create the output using the Template, replacing [fileds] in Template
-			$result .= "<div style=\"padding: 5px;overflow-wrap: break-word;\" class=\"cblist-user\" >". db_field_replace($list_template, $person['id'],$image_rules,$fields) ."</div >" ;
+			$result .= "<div style=\"padding: 5px;overflow-wrap: break-word;\" class=\"cblist-user\" >". db_field_replace($list_template, $person['id'],$rules,$fields,$search_paramtofind) ."</div >" ;
 		}
 	} else if ($list_debug == 1) { $debug_text .= "<p>DEBUG: Empty list?!</p>"; }
 	
