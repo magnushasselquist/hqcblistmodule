@@ -16,29 +16,18 @@ The only configuration for the module, apart from regular module configuration s
 * The CB list to be displayed
 * The template to be used for presentation of each CB User in the CB List.
 
-The following template is an easy beginner template:
+template example:
 ``````    <div class="yourclasstostyle"><p>[firstname] [lastname]<br/>[cb_yourfiled]</p></div>``````
 
-And the following template example is a more advanced usage:
-``````    <div class="yourclasstostyle">``````
-    ``````<p><a href="/path-to/userprofile/[user_id]"> <img id="avatar_img_[user_id]" width="50" /></a>``````
-    ``````<script type="text/javascript">``````
-    ``````// <![CDATA[``````
-    ``````var avatar_str = "[avatar]";``````
-    ``````if (avatar_str.length > 3) {``````
-    ``````avatar_url = "[avatar]";``````
-    ``````} else {``````
-    ``````avatar_url = "/components/com_comprofiler/plugin/templates/default/images/avatar/tnnophoto_n.png";``````
-    ``````}``````
-    ``````document.getElementById("avatar_img_[user_id]").src = avatar_url;``````
-    ``````// ]]>``````
-    ``````</script>``````
-    ``````</p>``````
-    ``````<p>&nbsp;</p>``````
-    ``````<p><a href="/ledare/profil/userprofile/[user_id]">[firstname] [lastname]</a>``````
-    ``````</p>``````
-    ``````<div class="roles">[cb_role]</div>``````
-    ``````<div class="badges">[cb_department]</div>``````
+`````` <div class="yourclasstostyle">[avatar]<br /> <a href="cb-profile/[user_id]">[Name]</a>
+`````` <div class="role"><a href="departmens/[cb_department]">[cb_department]</a>,[cb_role]</div>
+``````  </div>
+
+
+### rule
+avatar
+``````<a href="cb-profile/[user_id]"><img src="[avatar]" alt="[name]" title="[name]" width="80" height="80" /></a>
+
 
 ##Download
 [Click here to see available downloads](https://github.com/magnushasselquist/hqcblistmodule/releases)
