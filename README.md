@@ -1,44 +1,29 @@
-#HQ CB List for Community Builder
 
-##Description
-The purpose of this module is to present a Community Builder list of Users with a custom presentation-template with the possibility of using/presenting all user fileds from CB.
+# HQ CB List for Community Builder
 
-##Screenshots
+## Description
+The purpose of this module is to present a Community Builder list of Users with a custom presentation-template with the possibility of using/presenting all user fields from CB and Joomla.
 
-Example of presentation in front-end.
+## Screenshots
 
-Back-end configuration. Select a list, prepare a template.
+Example of presentation in front-end:  
+![cblistfront](https://user-images.githubusercontent.com/23451105/120665837-6a21d600-c48c-11eb-9815-c243f2310b37.png)
 
-Use advanced template configuration if needed.
+Back-end configuration:
+![cblistbackend](https://user-images.githubusercontent.com/23451105/120667634-f84a8c00-c48d-11eb-9cd5-a8e6279bb936.png)
 
-##Configuration
-The only configuration for the module, apart from regular module configuration such as position etc, are two things:
-* The CB list to be displayed
-* The template to be used for presentation of each CB User in the CB List.
+## Configuration  
+The only mandatory configuration for the module is selecting a CB list to show the users from.
 
-The following template is an easy beginner template:
-``````    <div class="yourclasstostyle"><p>[firstname] [lastname]<br/>[cb_yourfiled]</p></div>``````
+### template examples:
+``` html
+<div class="yourclasstostyle"><p>[firstname] [lastname]<br/>[cb_yourfiled]</p></div>
+<div class="yourclasstostyle">[avatar]<br /> <a href="cb-profile/[user_id]">[Name]</a>
+<div class="role"><a href="departmens/[cb_department]">[cb_department]</a>,[cb_role]</div>
+```
+### rule examples;
+A basic set of rules will be created when creating the module.
+When creating custom tags make sure the tags that you are using within always have a value. For example see the avatar rule and show_avatar rule.
 
-And the following template example is a more advanced usage:
-``````    <div class="yourclasstostyle">``````
-    ``````<p><a href="/path-to/userprofile/[user_id]"> <img id="avatar_img_[user_id]" width="50" /></a>``````
-    ``````<script type="text/javascript">``````
-    ``````// <![CDATA[``````
-    ``````var avatar_str = "[avatar]";``````
-    ``````if (avatar_str.length > 3) {``````
-    ``````avatar_url = "[avatar]";``````
-    ``````} else {``````
-    ``````avatar_url = "/components/com_comprofiler/plugin/templates/default/images/avatar/tnnophoto_n.png";``````
-    ``````}``````
-    ``````document.getElementById("avatar_img_[user_id]").src = avatar_url;``````
-    ``````// ]]>``````
-    ``````</script>``````
-    ``````</p>``````
-    ``````<p>&nbsp;</p>``````
-    ``````<p><a href="/ledare/profil/userprofile/[user_id]">[firstname] [lastname]</a>``````
-    ``````</p>``````
-    ``````<div class="roles">[cb_role]</div>``````
-    ``````<div class="badges">[cb_department]</div>``````
-
-##Download
+## Download
 [Click here to see available downloads](https://github.com/magnushasselquist/hqcblistmodule/releases)

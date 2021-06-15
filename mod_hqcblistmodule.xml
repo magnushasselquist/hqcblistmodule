@@ -3,7 +3,7 @@
     <name>HQ CB List for Community Builder</name>
     <author>Magnus Hasselquist</author>
     <authorUrl>https://github.com/magnushasselquist</authorUrl>
-    <version>2.3</version>
+    <version>3.0</version>
     <creationDate>2021-05-07</creationDate>
     <license>GNU General Public License version 2 or later</license>
     <description>Displaying Users from a selected CB List in a Module. This version is for CB 2</description>
@@ -15,6 +15,9 @@
         <filename>tmpl/default.php</filename>
         <filename>tmpl/index.html</filename>
     </files>
+	<languages folder="language">
+    <language tag="en-GB">en-GB.mod_hqcblistmodule.ini</language>
+    </languages>
     <config>
     	<fields name="params">
     		<fieldset name="basic">
@@ -28,8 +31,9 @@
                		query="SELECT listid, title FROM #__comprofiler_lists where published=1" />
 		<field
 			name="user-limit"
-			type="integer"
-			first="1" last="100" step="1"
+			
+			filter="integer" 
+			
 			default="10"
 			label="Number of users to show"	/>
 			<field
@@ -76,22 +80,67 @@
 		<field 
 		name="Minwidth" 
 		type="text" default="5" 
-		label="Minimum width column (rem)" 
+		label="Minimum width column (rem)"
+		filter="integer" 		
 		description=""/>
-               	 <field
-               			name="template"
-               			type="editor"
-               			label="Template for displaying each user. Use [cb_filedname] syntax to include fields."
-					        buttons="false"
-							default="&lt;p&gt; &lt;img src=&quot;[avatar]&quot; alt=&quot;[name]&quot; width=&quot;50&quot; /&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;../cb-profile/[user_id]&quot;&gt;[name]&lt;/a&gt;&lt;/p&gt;"
-					        filter="raw" />
+		
+		<field
+		name="template"
+		type="editor"
+		label="Template for displaying each user. Use [cb_fieldname] syntax to include fields."
+			buttons="false"
+			default="&lt;div class=&quot;yourclasstostyle&quot;&gt;[show_avatar]&lt;/div&gt;&lt;div class=&quot;yourclasstostyle&quot;&gt;[Linked_name]&lt;/div&gt;"
+			filter="raw" />
+			
+				<field
+				name="rules"
+				type="subform"
+				default='{&quot;rules0&quot;:{&quot;tag_name&quot;:&quot;show_avatar&quot;,&quot;htmlcode&quot;:&quot;&lt;a href=\&quot;cb-profile\/[user_id]\&quot;&gt;&lt;img src=\&quot;[avatar]\&quot; alt=\&quot;[name]\&quot; title=\&quot;[name]\&quot; width=\&quot;80\&quot; height=\&quot;80\&quot; \/&gt;&lt;\/a&gt;&quot;,&quot;htmlcode_no&quot;:&quot;Not used with a custom tag name&quot;},&quot;rules3&quot;:{&quot;tag_name&quot;:&quot;avatar&quot;,&quot;htmlcode&quot;:&quot;[avatar]&quot;,&quot;htmlcode_no&quot;:&quot;components\/com_comprofiler\/plugin\/templates\/default\/images\/avatar\/tnnophoto_n.png&quot;},&quot;rules1&quot;:{&quot;tag_name&quot;:&quot;canvas&quot;,&quot;htmlcode&quot;:&quot;&lt;img src=\&quot;[canvas]\&quot; width=\&quot;100\&quot; height=\&quot;60\&quot; \/&gt;&quot;,&quot;htmlcode_no&quot;:&quot;There is no canvas image&quot;},&quot;rules2&quot;:{&quot;tag_name&quot;:&quot;Linked_name&quot;,&quot;htmlcode&quot;:&quot;&lt;a href=\&quot;cb-profile\/[user_id]\&quot;&gt;[name]&lt;\/a&gt;&quot;,&quot;htmlcode_no&quot;:&quot;Not used with a custom tag name&quot;}}'
+				label="Rules"
+				description="Here you can create a rule for each tag"
+				multiple="true"
+				min="0"
+				max="10"
+				>
+				<form>
+					<field
+						name="tag_name"
+						default=""
+						type="text"
+						label="tag name"
+						description=""
+						/>
+					<field
+						name="htmlcode"
+						type="textarea"
+						default=""
+						label="html code to replace tag with"
+						filter="raw"
+						description="Insert here your html code. You can use [IMAGE] to insert the image link"
+						cols="20"
+						rows="4"
+						/>
+					<field
+						name="htmlcode_no"
+						type="textarea"
+						default=""
+						label="html code to replace tag with when there is no data available"
+						filter="raw"
+						description="Insert here your html code to place when no data is available"
+						cols="20"
+						rows="4"
+						/>
+				</form>
+			</field>	
+							
+							
 						
-                  <field
-                		name="text-below"
-                		type="editor"
-                		label="Text to be included UNDER the user list"
- 					        buttons="false"
- 					        filter="raw" />
+		<field
+			name="text-below"
+			type="editor"
+			label="Text to be included UNDER the user list"
+				buttons="false"
+				filter="raw" />
 		  <field 
 			 	name="debug" type="radio"
 				default="0"
